@@ -21,7 +21,10 @@ urlpatterns = [
 
     path('api/', include('poll.urls')),
 
-    # path('api-auth/', include('rest_framework.urls'))
+    path('api-auth/', include('rest_framework.urls')),
+
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 
 ]
 
