@@ -1,20 +1,15 @@
-import logging
 from datetime import datetime
 
-
 from django.shortcuts import get_object_or_404
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from .serializers import *
 
-logger = logging.getLogger(__name__)
-
 
 @api_view(['GET'])
-# @permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated,))
 def poll_list_all(request):
     """Show all polls."""
     polls = Poll.objects.all()
@@ -23,7 +18,7 @@ def poll_list_all(request):
 
 
 @api_view(['GET'])
-# @permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated,))
 def poll_list_active(request):
     """Show all active polls."""
     poll = Poll.objects.filter(date_end__gt=datetime.now()).filter(date_start__lte=datetime.now())
@@ -32,22 +27,25 @@ def poll_list_active(request):
 
 
 @api_view(['PATCH', 'DELETE'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def delete_or_update_poll(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
+    date_start_data = request.data.get('date_start')
     if request.method == 'DElETE':
         poll.delete()
         return Response('Poll deleted', status=204)
     elif request.method == 'PATCH':
-        serializer = PollSerializers(poll, data=request.data, partial=True)
-        if serializer.is_valid():
-            poll = serializer.save()
-            return Response(PollSerializers(poll).data)
-        return Response(serializer.errors, status=400)
+        if poll.date_start == date_start_data:
+            serializer = PollSerializers(poll, data=request.data, partial=True)
+            if serializer.is_valid():
+                poll = serializer.save()
+                return Response(PollSerializers(poll).data)
+            return Response(serializer.errors, status=400)
+        return Response({'message': 'Not allow change date start'}, status=400)
 
 
 @api_view(['POST'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def create_poll(request):
     serializer = PollSerializers(data=request.data, context={'request': request})
     if serializer.is_valid():
@@ -57,7 +55,7 @@ def create_poll(request):
 
 
 @api_view(['POST'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def create_question(request):
     serializer = QuestionSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
@@ -67,7 +65,7 @@ def create_question(request):
 
 
 @api_view(['PATCH', 'DELETE'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def delete_or_update_question(request, quest_id):
     quest = get_object_or_404(Question, pk=quest_id)
     if request.method == 'DElETE':
@@ -82,7 +80,7 @@ def delete_or_update_question(request, quest_id):
 
 
 @api_view(['POST'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def create_choice(request):
     serializer = ChoiceSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
@@ -92,7 +90,7 @@ def create_choice(request):
 
 
 @api_view(['PATCH', 'DELETE'])
-# @permission_classes((IsAdminUser, IsAuthenticated,))
+@permission_classes((IsAdminUser, IsAuthenticated,))
 def delete_or_update_choice(request, choice_id):
     choice = get_object_or_404(Question, pk=choice_id)
     if request.method == 'DElETE':
@@ -107,7 +105,7 @@ def delete_or_update_choice(request, choice_id):
 
 
 @api_view(['POST'])
-# @permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated,))
 def answer_create(request):
     serializer = AnswerSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
@@ -117,7 +115,7 @@ def answer_create(request):
 
 
 @api_view(['GET'])
-# @permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated,))
 def answer_view(request, user_id):
     answers = Answer.objects.filter(user_voter=user_id)
     serializer = AnswerSerializer(answers, many=True)
@@ -125,7 +123,7 @@ def answer_view(request, user_id):
 
 
 @api_view(['PATCH', 'DELETE'])
-# @permission_classes((IsAuthenticated, IsAdminUser,))
+@permission_classes((IsAuthenticated, IsAdminUser,))
 def delete_or_update_answer(request, answer_id):
     answer = get_object_or_404(Answer, pk=answer_id)
     if request.method == 'DELETE':

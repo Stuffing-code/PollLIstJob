@@ -7,17 +7,6 @@ class PollSerializers(serializers.ModelSerializer):
         model = Poll
         fields = '__all__'
 
-    def validate_start_date(self, value):
-        """
-        Raise error if try to change date_start.
-        """
-        if self.instance and self.instance.date_start < value:
-            raise serializers.ValidationError(
-                "Not allow change date start"
-            )
-
-        return value
-
 
 class QuestionSerializer(serializers.ModelSerializer):
 
@@ -35,6 +24,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
@@ -44,7 +34,6 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 class AnswerSerializer(serializers.ModelSerializer):
     choice = ChoiceSerializer(read_only=True)
-    questions = QuestionSerializer()
 
     class Meta:
         model = Answer
