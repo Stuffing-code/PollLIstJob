@@ -18,8 +18,12 @@ urlpatterns = [
     path('choice/update/<int:choice_id>', views.delete_or_update_choice, name='choice_update'),
     # answer url
     path('answer/view/<int:user_id>', views.answer_view, name='view_answer'),
-    path('answer/update/', views.delete_or_update_answer, name='answer_update'),
+    path('answer/update/<int:answer_id>', views.delete_or_update_answer, name='answer_update'),
     path('answer/create/', views.answer_create, name='answer_create'),
+    # voter
+    path('voter/<int:user_id>', views.user_voter_view, name='user_voter_view'),
+    path('voter/create/', views.user_voter_create, name='user_voter_create'),
+    path('voter/delete/<int:user_id>', views.delete_user_voter, name='delete_user_voter'),
 ]
 
 urlpatterns += doc_url

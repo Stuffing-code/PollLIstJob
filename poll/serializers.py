@@ -43,10 +43,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class UserVoterSerializers(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
+    poll = PollSerializers()
 
     class Meta:
         model = UserVoter
-        fields = ['id', 'poll', 'user', 'choice', 'answers']
+        fields = ['id', 'poll', 'user', 'answers']
         read_only_fields = ['id', 'user']
 
     def create(self, validated_data):

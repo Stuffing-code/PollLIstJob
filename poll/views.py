@@ -95,7 +95,7 @@ def delete_or_update_choice(request, choice_id):
     choice = get_object_or_404(Question, pk=choice_id)
     if request.method == 'DElETE':
         choice.delete()
-        return Response('Question deleted', status=204)
+        return Response('Choice deleted', status=204)
     elif request.method == 'PATCH':
         serializer = ChoiceSerializer(choice, data=request.data, partial=True)
         if serializer.is_valid():
@@ -135,3 +135,32 @@ def delete_or_update_answer(request, answer_id):
             answer = serializer.save()
             return Response(AnswerSerializer(answer).data)
         return Response(serializer.errors, status=400)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def user_voter_view(request, user_id):
+    user_voter = UserVoter.objects.filter(user=user_id)
+    serializer = UserVoterSerializers(user_voter, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def user_voter_create(request):
+    serializer = UserVoterSerializers(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        user_voter = serializer.save()
+        return Response(UserVoterSerializers(user_voter).data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['DELETE'])
+@permission_classes((IsAuthenticated, IsAdminUser,))
+def delete_user_voter(request, answer_id):
+    answer = get_object_or_404(Answer, pk=answer_id)
+    if request.method == 'DELETE':
+        answer.delete()
+        return Response("Answer deleted", status=204)
+    else:
+        return Response({'message': 'error delete'})
