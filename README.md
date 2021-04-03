@@ -1,7 +1,6 @@
 # PollLIstJob
 
-Для разворота в локальном виде необходимо:
-
+# Для разворота в локальном виде, после клонирования репозитория, необходимо:
 
 pip install -r requirements.txt
 python manage.py makemigrations
@@ -9,7 +8,8 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 
-api можно посмотреть по адресу http://127.0.0.1:8000/api/swagger/
+
+# Список всех доступных api можно посмотреть по адресу http://127.0.0.1:8000/api/swagger/
 
 # API:
 
